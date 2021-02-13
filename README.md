@@ -12,7 +12,7 @@ O intuito principal, é "alugar" internet, uma rede wifi aberta, que ao se conec
 Como ainda está em desenvolvimento, isso será detalhado em um momento futuro. O foco agora é terminar o básico pra poder pensar nisso depois (estou trabalhando 
 nisso em meu tempo livre)
 * Para a configuração, é necessário instalar o pacote **uhttpd** no roteador OpenWRT.
-* Após isso, basta enviar os diretórios **www** e **opt** para o caminho **/**.
+* Após isso, basta enviar os diretórios **www** e **opt** para o caminho **/**
 * Configurar uma nova interface com o nome ap no arquivo **/etc/config/network**
     > config interface 'ap'  
     > option proto 'static'  
