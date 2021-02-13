@@ -13,8 +13,19 @@ Como ainda está em desenvolvimento, isso será detalhado em um momento futuro. 
 nisso em meu tempo livre)
 * Para a configuração, é necessário instalar o pacote **uhttpd** no roteador OpenWRT.
 * Após isso, basta enviar os diretórios **www** e **opt** para o caminho **/**.
-* Configurar uma rede wifi com o nome de interface AP
-* Copiar o arquivo firewall.user para /etc
+* Configurar uma nova interface com o nome ap no arquivo **/etc/config/network**
+    > config interface 'ap'  
+    > option proto 'static'  
+    > option ipaddr '10.50.0.254'  
+    > option netmask '255.255.255.0'  
+* Configurar uma rede wifi com o nome AP no arquivo **/etc/config/wireless**
+    > config wifi-iface  'AP'
+    > option device 'radio0'  
+    > option network 'ap'  
+    > option mode 'ap'  
+    > option ssid 'GUEST'  
+    > option encryption 'none'  
+* Copiar o arquivo **firewall.user** para **/etc**
 * Adicionar as linhas abaixo à seção **config uhttpd main** do arquivo **/etc/config/uhttpd**
     > option index_page       cgi-bin/captive  
     > option error_page       /cgi-bin/captive  
