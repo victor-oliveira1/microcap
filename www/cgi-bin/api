@@ -1,0 +1,14 @@
+#!/bin/sh
+. /opt/microcap/lib/functions.sh
+
+if [ "${REQUEST_METHOD}" == "POST" ]; then
+    postProcess
+fi
+
+cat <<EOF
+Status: 301 Moved Permanently
+Location: http://${SERVER_ADDR}/cgi-bin/manager
+Set-Cookie: msg="${MSG}"; Max-Age=1
+Set-Cookie: result="${RESULT}"; Max-Age=1
+
+EOF

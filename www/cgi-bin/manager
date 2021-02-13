@@ -1,0 +1,207 @@
+#!/bin/sh
+. /opt/microcap/lib/functions.sh
+
+cat <<EOF
+Content-type: text/html
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <title>MicroCap Manager (DEV)</title>
+    </head>
+  
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+            <div class="container">
+                <a class="navbar-brand">MicroCap Manager (DEV)</a>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" data-toggle="modal" data-target="#configModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                          <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"></path>
+                        </svg>
+                    </button>
+
+                    <div class="modal fade" id="configModal" tabindex="-1" style="display: none;" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Configurações</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                
+                                <form action="/cgi-bin/api" method="POST">
+                                    <div class="modal-body">
+                                        <label for="inputSsid">SSID</label>
+                                        <input name="ssid" type="text" class="form-control" value="$(getSsid)" id="inputSsid" required>
+                                        <small class="form-text text-muted">Alterar o nome da rede irá causar um reinício do rádio wireless</small>
+                                    </div>
+                                    
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                        <button name="action" value="ssidUpdate" class="btn btn-primary">Aplicar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="window.location.href=window.location.href">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"></path>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container">
+
+            $(test -n "${HTTP_COOKIE}" && {
+                local MSG=$(echo "${HTTP_COOKIE}"|sed "s/.*msg=\"\([^;]*\)\".*$/\1/")
+                local RESULT=$(echo "${HTTP_COOKIE}"|sed "s/.*result=\"\([^;]*\)\".*$/\1/")
+
+                echo '
+                    <div class="alert alert-'"$(test "${RESULT}" -eq "0" && echo "success" || echo "danger")"' alert-dismissible fade show text-center" role="alert">
+                        '"${MSG}"'
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                '
+            })
+
+            <style>
+                .table td, .table thead th, .table th {
+                    vertical-align: middle;
+                }
+            </style>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Hostname</th>
+                            <th scope="col">MAC</th>
+                            <th scope="col">IP</th>
+                            <th scope="col">Tempo Restante</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        $(COUNTER=1
+
+                        for MAC in $(getStations); do
+                            echo '
+                                <tr>
+                                    <th scope="row">'"${COUNTER}"'</th>
+                                    <td>'"$(getId ${MAC})"'</td>
+                                    <td>'"$(getHostname ${MAC})"'</td>
+                                    <td>'"$(echo ${MAC}|tr [a-z] [A-Z])"'</td>
+                                    <td>'"$(getIp ${MAC})"'</td>
+                                    <td>'"$(remainingTime ${MAC})"'</td>
+                                    <td>
+                                        '"$(checkHostStatus ${MAC} && {
+                                            echo '
+                                            <svg fill="green" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32">
+                                                <path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 1113 0 6.5 6.5 0 01-13 0zM0 8a8 8 0 1116 0A8 8 0 010 8zm11.78-1.72a.75.75 0 00-1.06-1.06L6.75 9.19 5.28 7.72a.75.75 0 00-1.06 1.06l2 2a.75.75 0 001.06 0l4.5-4.5z"></path>
+                                            </svg>
+                                            '
+                                        } || {
+                                            echo '
+                                            <svg fill="red" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="32" height="32"><path fill-rule="evenodd" d="M1.5 8a6.5 6.5 0 0110.535-5.096l-9.131 9.131A6.472 6.472 0 011.5 8zm2.465 5.096a6.5 6.5 0 009.131-9.131l-9.131 9.131zM8 0a8 8 0 100 16A8 8 0 008 0z"></path></svg>'
+                                        })"'
+                                    </td>
+                                    <td>
+                                        '"$(checkHostStatus ${MAC} && {
+                                            echo '
+                                                <form action="/cgi-bin/api" method="POST">
+                                                    <input type="hidden" name="mac" value="'"${MAC}"'">
+                                                    <button class="btn btn-danger" name="action" value="blockHost">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                                                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                                                        </svg>
+                                                    </button>
+                                                </form>
+                                            '
+                                        } || {
+                                            echo '
+                                                <button data-toggle="modal" data-target="#modalUnlockHost" class="btn btn-success" type="button">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock-fill" viewBox="0 0 16 16">
+                                                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2z"/>
+                                                    </svg>
+                                                </button>
+                                        
+                                                <div class="modal fade" id="modalUnlockHost" tabindex="-1" role="dialog">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">Desbloqueio de dispositivo</h5>
+                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+
+                                                            <form action="/cgi-bin/api" method="POST">
+                                                                <input type="hidden" name="mac" value="'"${MAC}"'">
+                                                                <div class="modal-body">
+                                                                    <label>Tempo</label>
+                                                                    <select name="time" class="custom-select">
+                                                                        <option selected="">Escolha uma opção...</option>
+                                                                        <option value="30">30 minutos</option>
+                                                                        <option value="60">1 hora</option>
+                                                                        <option value="120">2 horas</option>
+                                                                        <option value="240">4 horas</option>
+                                                                        <option value="480">8 horas</option>
+                                                                    </select>
+                                                                </div>
+
+                                                                <div class="modal-footer">
+                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                                                                    <button name="action" value="unblockHost" class="btn btn-primary">Aplicar</button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            '
+                                        })"'
+                                    </td>
+                                </tr>
+                            '
+                            COUNTER=$(($COUNTER+1))
+                        done)
+                    </tbody>
+                </table>
+            </div>
+
+            <footer class="page-footer font-small blue text-center fixed-bottom">
+                <div class="footer-copyright my-3">2021 MicroCap
+                    <a href="mailto:victor.oliveira@gmx.com"> &lt;victor.oliveira@gmx.com&gt;</a>
+                </div>
+            </footer>
+        
+        </div>
+        
+        <script src="/js/jquery-3.5.1.slim.min.js"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        
+        <script>
+            \$(function () {
+                \$('[data-toggle="tooltip"]').tooltip()
+            });
+        </script>
+
+    </body>
+</html>
+
+EOF
