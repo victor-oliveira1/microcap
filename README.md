@@ -18,5 +18,13 @@ Estou almejando os pequenos empreendedores, que possuem um roteador em casa para
 
 ### Capturas de tela
 
+**Tela principal**
+![Página principal](https://raw.githubusercontent.com/victor-oliveira1/microcap/main/captura_3.jpeg)
 
-Victor Oliveira <victor.oliveira@gmx.com>
+**Alteração de SSID**
+![Página principal](https://raw.githubusercontent.com/victor-oliveira1/microcap/main/captura_2.jpeg)
+
+**Desbloqueio de dispositivo**
+![Página principal](https://raw.githubusercontent.com/victor-oliveira1/microcap/main/captura_1.jpeg)
+
+2021 Victor Oliveira <victor.oliveira@gmx.com>
