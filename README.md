@@ -33,7 +33,7 @@ nisso em meu tempo livre)
     > */1 * * * * /opt/microcap/bin/cleaner.sh
 
 ### Motivação
-Sou analista de infraestrutura, e queria muito aprender a programar para a web. Devido a uma idéia de uma pessoa, acabei estudando para colocar esse projeto em prática. Estou muito satisfeito com o resultado, aprendi bastante e vou seguir adicionando algumas funções sempre que puder.
+Sou analista de infraestrutura, e queria muito aprender a programar para a web. Devido a uma idéia que surgiu de uma pessoa muito querida, acabei estudando para colocar esse projeto em prática. Estou muito satisfeito com o resultado, aprendi bastante e vou seguir adicionando algumas funções sempre que puder.
 
 ### Capturas de tela
 
