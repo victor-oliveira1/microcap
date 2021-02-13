@@ -11,7 +11,15 @@ O intuito principal, é "alugar" internet, uma rede wifi aberta, que ao se conec
 ### Como instalar?
 Como ainda está em desenvolvimento, isso será detalhado em um momento futuro. O foco agora é terminar o básico pra poder pensar nisso depois (estou trabalhando 
 nisso em meu tempo livre)
-Mas de momento, é necessário
+* Para a configuração, é necessário instalar o pacote **uhttpd** no roteador OpenWRT.
+* Após isso, basta enviar os diretórios **www** e **opt** para o caminho **/**.
+* Configurar uma rede wifi com o nome de interface AP
+* Copiar o arquivo firewall.user para /etc
+* Adicionar as linhas abaixo à seção **config uhttpd main** do arquivo **/etc/config/uhttpd**
+    > option index_page       cgi-bin/captive  
+    > option error_page       /cgi-bin/captive  
+* Adicionar a linha abaixo no crontab
+    > */1 * * * * /opt/microcap/bin/cleaner.sh
 
 ### Motivação
 Estou almejando os pequenos empreendedores, que possuem um roteador em casa parado e não querem gastar a mais com esse tipo de coisa
