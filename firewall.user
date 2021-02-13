@@ -1,0 +1,10 @@
+# Create chain INTERNET and set mark 99
+iptables -t mangle -N INTERNET
+iptables -t mangle -I INTERNET -j MARK --set-mark 99
+
+# Only packets with mark 99 can use internet, otherwise ask auth
+iptables -t nat -I PREROUTING -i wlan0 -m mark --mark 99 -j RETURN
+iptables -t nat -A PREROUTING -i wlan0 -p tcp --dport 80 -j DNAT --to-destination $(uci get network.ap.ipaddr)
+
+# Allow forward from marked packets
+iptables -I FORWARD -m mark --mark 99 -i wlan0 -o $(uci get network.wan.ifname) -j ACCEPT
