@@ -2,6 +2,15 @@
 # MicroCap Functions Library
 # Victor Oliveira <victor.oliveira@sada.com.br>
 
+# Changelog
+# v1.1 - 24/05/2021 09:29 - Victor Oliveira
+# - Corrigido problema de ordem nos modais de
+#   bloqueio e desbloqueio
+
+
+VERSION="1.1"
+
+
 getStations() {
     iw wlan0 station dump | \
     grep -Eio "([a-f0-9]{2}:){5}[a-f0-9]{2}"
@@ -27,8 +36,7 @@ getHostname() {
 }
 
 urlDecode() {
-    echo "${1}" | \
-    sed -e "s/%2C/,/g" -e "s/%3A/:/g" -e "s/+/ /g"
+    uhttpd -d "${1}"
 }
 
 postProcess() {
@@ -142,6 +150,16 @@ ssidUpdate() {
         uci commit && {
             wifi
         }
+    }
+}
+
+isWifiHost() {
+    echo "${REMOTE_ADDR}" \
+    | grep "$(uci get network.ap.ipaddr \
+    | cut -d"." -f1-3)" &> /dev/null && {
+        return 0
+    } || {
+        return 1
     }
 }
 
